@@ -606,13 +606,19 @@ async function submitDraw() {
 function showWait() {
   document.getElementById('topbarCode2').textContent = G.code;
   document.getElementById('seeBtn').disabled = true;
+  G.waitStart = Date.now();
   show('wait');
   startPoll('wait');
 }
 
 async function refreshWait() {
   try {
-    const players = await dbGet('players', `room_code=eq.${G.code}&order=created_at`);
+    const [players, rooms] = await Promise.all([
+      dbGet('players', `room_code=eq.${G.code}&order=created_at`),
+      dbGet('rooms', `code=eq.${G.code}&select=phase,ai_guess,ai_confidence,ai_comment,topic,timer_sec`)
+    ]);
+
+    // Render submission status
     document.getElementById('subList').innerHTML = players.map((p,i) =>
       `<div class="sub-chip">
         <div class="${avClass(i)}" style="width:20px;height:20px;font-size:9px;">${p.name.charAt(0)}</div>
@@ -622,23 +628,25 @@ async function refreshWait() {
         </div>
       </div>`).join('');
 
-    // Host: trigger AI when all submitted
-    if (G.isHost) {
-      const allDone = players.length > 0 && players.every(p => p.submitted);
-      if (allDone) {
-        const rooms = await dbGet('rooms', `code=eq.${G.code}&select=phase`);
-        if (rooms.length && rooms[0].phase === 'draw') {
-          stopPoll(); triggerAI();
-        }
-      }
-    }
+    if (!rooms.length) return;
+    const room = rooms[0];
 
-    // Everyone: check if result ready
-    const rooms = await dbGet('rooms', `code=eq.${G.code}&select=phase,ai_guess,ai_confidence,ai_comment,topic`);
-    if (rooms.length && rooms[0].phase === 'result') {
+    // Result ready — show to everyone
+    if (room.phase === 'result') {
       stopPoll();
       document.getElementById('seeBtn').disabled = false;
-      loadResult(rooms[0]);
+      loadResult(room);
+      return;
+    }
+
+    // Host: trigger AI when all submitted OR after timeout (30s)
+    if (G.isHost && room.phase === 'draw') {
+      const allDone = players.length > 0 && players.every(p => p.submitted);
+      const timedOut = (Date.now() - G.waitStart) > 30000;
+      if (allDone || timedOut) {
+        stopPoll();
+        triggerAI();
+      }
     }
   } catch(e) { console.error(e); }
 }

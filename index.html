@@ -161,9 +161,19 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div style="width:100%;display:flex;flex-direction:column;gap:11px;">
       <div class="card">
         <div class="card-label">建立新房間</div>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="nameCreate" placeholder="你的名字" maxlength="8" style="flex:1;">
-          <button class="btn btn-orange" onclick="createRoom()">建立</button>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <input type="text" id="nameCreate" placeholder="你的名字" maxlength="8">
+          <div style="position:relative;">
+            <input type="password" id="geminiKey" placeholder="Gemini API Key" autocomplete="off" style="width:100%;padding-right:40px;">
+            <button onclick="toggleKeyVisibility()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;" id="eyeBtn" title="顯示/隱藏">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray-mid)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div style="font-size:11px;color:var(--gray-mid);display:flex;align-items:center;gap:5px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Key 只存在此裝置，不會上傳至伺服器
+          </div>
+          <button class="btn btn-orange" onclick="createRoom()" style="width:100%;">建立房間 →</button>
         </div>
       </div>
       <div style="text-align:center;font-size:12px;color:var(--gray-mid);">— 或 —</div>
@@ -178,7 +188,7 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     </div>
     <div class="info-banner" style="width:100%;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>大家看同一個題目各自畫圖，時間到後一起攤開看看大家畫了什麼！</span>
+      <span>大家看同一個題目各自畫圖，時間到後一起攤開！房主可輸入 Gemini Key 讓 AI 描述每個人的畫。</span>
     </div>
   </div>
 </div>
@@ -356,10 +366,11 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 
 const HEADS = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 const CIRC = 125.7;
 
 // ── STATE ──
-const G = {code:'',name:'',isHost:false,topic:'',timerSec:90,players:[],submitted:false,waitStart:0,aiTriggered:false};
+const G = {code:'',name:'',isHost:false,topic:'',timerSec:90,players:[],submitted:false,waitStart:0,aiTriggered:false,geminiKey:''};
 let pollTimer = null;
 
 // ── API HELPERS ──
@@ -375,16 +386,29 @@ function showToast(msg,dur=2800){const t=document.getElementById('toast');t.text
 function randCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');}
 function avClass(i){return 'av c'+(i%6);}
 function stopPoll(){clearInterval(pollTimer);pollTimer=null;}
+function toggleKeyVisibility(){
+  const inp=document.getElementById('geminiKey');
+  const icon=document.getElementById('eyeIcon');
+  if(inp.type==='password'){
+    inp.type='text';
+    icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type='password';
+    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
 
 // ── CREATE ROOM ──
 async function createRoom(){
   const name=document.getElementById('nameCreate').value.trim();
+  const geminiKey=document.getElementById('geminiKey').value.trim();
   if(!name){showToast('請輸入你的名字');return;}
+  if(!geminiKey){showToast('請輸入 Gemini API Key');return;}
   const code=randCode();
   try{
     await dbPost('rooms',{code,host:name,phase:'lobby',topic:'',timer_sec:90,ai_results:'{}',topic_revealed:false});
     await dbPost('players',{room_code:code,name,submitted:false,ai_desc:'',ai_score:0});
-    G.code=code;G.name=name;G.isHost=true;
+    G.code=code;G.name=name;G.isHost=true;G.geminiKey=geminiKey;
     enterLobby();
   }catch(e){showToast('建立失敗：'+e.message);}
 }
@@ -585,10 +609,47 @@ async function submitDraw(){
   }catch(e){showToast('提交失敗：'+e.message);}
 
   showToast('畫作已提交！');
+
+  // If host provided a Gemini key, analyze this player's drawing
+  if(G.geminiKey){
+    analyzeMyDrawing(dataUrl).catch(console.error);
+  }
+
   showWait();
 }
 
 
+
+// ── GEMINI ANALYSIS ──
+async function analyzeMyDrawing(dataUrl){
+  const b64=dataUrl.split(',')[1];
+  const prompt=`你是一個有趣的 AI，請用繁體中文描述這張手繪圖畫的是什麼。
+要求：
+1. 用 1-2 句話描述畫中的主要內容
+2. 語氣輕鬆有趣
+3. 不要說「這張圖」或「這幅畫」，直接描述內容
+4. 最後用一個詞總結（格式：總結：XXX）`;
+  try{
+    const resp=await fetch(`${GEMINI_URL}?key=${G.geminiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[
+        {inline_data:{mime_type:'image/jpeg',data:b64}},
+        {text:prompt}
+      ]}]})
+    });
+    const data=await resp.json();
+    if(data.error){console.error('Gemini error:',data.error.message);return;}
+    const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    const descMatch=text.match(/描述[：:]\s*(.+)/);
+    const summaryMatch=text.match(/總結[：:]\s*(.+)/);
+    const desc=descMatch?descMatch[1].trim():text.slice(0,120);
+    const summary=summaryMatch?summaryMatch[1].trim():'';
+    await dbPatch('players',`room_code=eq.${G.code}&name=eq.${G.name}`,{
+      ai_desc:desc, ai_summary:summary
+    });
+  }catch(e){console.error('Gemini fetch error:',e);}
+}
 
 // ── WAIT ──
 function showWait(){
@@ -663,16 +724,13 @@ async function revealResults(){
   }
 }
 
-  return 1;
-}
-
 // ── LOAD RESULT ──
 async function loadResult(){
   stopPoll();
   document.getElementById('overlay').classList.remove('active');
   try{
     const[players,rooms,drawings]=await Promise.all([
-      dbGet('players',`room_code=eq.${G.code}&order=ai_score.desc`),
+      dbGet('players',`room_code=eq.${G.code}&order=created_at`),
       dbGet('rooms',`code=eq.${G.code}&select=topic`),
       dbGet('drawings',`room_code=eq.${G.code}&order=created_at`)
     ]);
@@ -690,8 +748,13 @@ async function loadResult(){
           <div class="${avClass(i)}" style="width:28px;height:28px;font-size:11px;">${p.name.charAt(0)}</div>
           <div class="prc-name">${p.name}${p.name===G.name?' <span style="color:var(--orange);font-size:10px;">(我)</span>':''}</div>
         </div>
-        <div style="padding:12px;">
+        <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
           ${img?`<img src="${img}" alt="${p.name}的畫" style="width:100%;border-radius:8px;display:block;background:white;">`:'<div style="height:120px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gray-mid);">無畫作</div>'}
+          ${p.ai_desc?`<div style="background:var(--orange-pale);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--orange-deep);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🍌 Gemini 說</div>
+            <div style="font-size:12px;color:var(--gray-dark);line-height:1.6;">${p.ai_desc}</div>
+            ${p.ai_summary?`<div style="font-size:11px;color:var(--gray-mid);margin-top:4px;">總結：<strong style="color:var(--charcoal);">${p.ai_summary}</strong></div>`:''}
+          </div>`:''}
         </div>
       </div>`;
     }).join('');

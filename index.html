@@ -317,10 +317,6 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
       <div class="guess" id="aiGuess">---</div>
       <div class="ai-tag ok" id="aiTag">分析中</div>
     </div>
-    <div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:9px;">大家的畫作</div>
-      <div class="rgrid" id="rGrid"></div>
-    </div>
     <div class="card">
       <div class="card-label">Banana 的評語</div>
       <div id="aiComment" style="font-size:13px;color:var(--gray-dark);line-height:1.7;"></div>
@@ -328,6 +324,10 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div class="reveal-card">
       <div class="lbl">正確題目</div>
       <div class="val" id="revealTopic">---</div>
+    </div>
+    <div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:11px;margin-top:4px;">看看大家都畫了什麼</div>
+      <div class="rgrid" id="rGrid"></div>
     </div>
     <div style="height:18px;"></div>
   </div>
@@ -519,6 +519,8 @@ function beginDraw() {
   canvas.style.height = h + 'px';
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, w, h);
   strokes=[]; curStroke=[];
   G.submitted = false;
   document.getElementById('subBtn').disabled = false;
@@ -540,26 +542,32 @@ function setupEvents() {
   c.ontouchend = () => { drawing=false; endS(); };
 }
 function pos(e) {
-  const r = document.getElementById('dc').getBoundingClientRect();
+  const canvas = document.getElementById('dc');
+  const r = canvas.getBoundingClientRect();
   const s = e.touches ? e.touches[0] : e;
-  return [s.clientX-r.left, s.clientY-r.top];
+  const scaleX = canvas.width / (r.width * (window.devicePixelRatio || 1));
+  const scaleY = canvas.height / (r.height * (window.devicePixelRatio || 1));
+  return [(s.clientX - r.left), (s.clientY - r.top)];
 }
 function startS() { curStroke=[{x:lx,y:ly}]; }
 function endS() { if(curStroke.length>1) strokes.push({c:erasing?null:curC,s:curS,e:erasing,pts:[...curStroke]}); curStroke=[]; }
 function drawS(e) {
   const [x,y]=pos(e), ctx=document.getElementById('dc').getContext('2d');
   ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y);
-  ctx.strokeStyle=erasing?'#FAF7F2':curC; ctx.lineWidth=erasing?24:curS; ctx.stroke();
+  ctx.strokeStyle=erasing?'#FFFFFF':curC; ctx.lineWidth=erasing?24:curS; ctx.stroke();
   curStroke.push({x,y}); [lx,ly]=[x,y];
 }
 function redraw() {
   const cv=document.getElementById('dc'), ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
+  const dpr2 = window.devicePixelRatio||1;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, cv.width/dpr2, cv.height/dpr2);
   strokes.forEach(s => {
     if(s.pts.length<2) return;
     ctx.beginPath(); ctx.moveTo(s.pts[0].x,s.pts[0].y);
     s.pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));
-    ctx.strokeStyle=s.e?'#FAF7F2':s.c; ctx.lineWidth=s.s; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
+    ctx.strokeStyle=s.e?'#FFFFFF':s.c; ctx.lineWidth=s.s; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
   });
 }
 function undo() { if(strokes.length){strokes.pop();redraw();} }
@@ -697,7 +705,7 @@ async function loadResult(room) {
       <div class="rc-head"><div class="${avClass(i)}" style="width:18px;height:18px;font-size:8px;">${d.player_name.charAt(0)}</div>${d.player_name}${d.player_name===G.name?' (我)':''}</div>
       <img src="${d.image_data}" loading="lazy" alt="${d.player_name}的畫">
     </div>`).join('');
-  grid.innerHTML += `<div class="rc ai"><div class="rc-head">🍌 Banana 猜</div><div class="rc-placeholder"><div style="font-size:34px;">🍌</div><div style="font-size:15px;font-weight:700;color:var(--orange-deep);text-align:center;">${guess}</div><div style="font-size:11px;color:var(--gray-mid);">信心：${room.ai_confidence||'低'}</div></div></div>`;
+  // AI guess already shown prominently above
 
   document.getElementById('nextBtn').textContent = G.isHost ? '再玩一輪 →' : '回首頁';
   show('result');

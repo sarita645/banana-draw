@@ -514,11 +514,13 @@ function beginDraw() {
   const wrap = document.querySelector('.canvas-wrap');
   const w = wrap.clientWidth || window.innerWidth;
   const h = Math.min(Math.max(w * 0.72, 220), 380);
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = w * dpr; canvas.height = h * dpr;
+  // Set canvas logical size = CSS size (no DPR scaling) so coords always match
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = w + 'px';
   canvas.style.height = h + 'px';
   const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.lineCap='round'; ctx.lineJoin='round';
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, w, h);
   strokes=[]; curStroke=[];
@@ -545,9 +547,10 @@ function pos(e) {
   const canvas = document.getElementById('dc');
   const r = canvas.getBoundingClientRect();
   const s = e.touches ? e.touches[0] : e;
-  const scaleX = canvas.width / (r.width * (window.devicePixelRatio || 1));
-  const scaleY = canvas.height / (r.height * (window.devicePixelRatio || 1));
-  return [(s.clientX - r.left), (s.clientY - r.top)];
+  // Scale in case CSS size differs from canvas logical size
+  const scaleX = canvas.width / r.width;
+  const scaleY = canvas.height / r.height;
+  return [(s.clientX - r.left) * scaleX, (s.clientY - r.top) * scaleY];
 }
 function startS() { curStroke=[{x:lx,y:ly}]; }
 function endS() { if(curStroke.length>1) strokes.push({c:erasing?null:curC,s:curS,e:erasing,pts:[...curStroke]}); curStroke=[]; }
@@ -560,9 +563,8 @@ function drawS(e) {
 function redraw() {
   const cv=document.getElementById('dc'), ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
-  const dpr2 = window.devicePixelRatio||1;
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, cv.width/dpr2, cv.height/dpr2);
+  ctx.fillRect(0, 0, cv.width, cv.height);
   strokes.forEach(s => {
     if(s.pts.length<2) return;
     ctx.beginPath(); ctx.moveTo(s.pts[0].x,s.pts[0].y);

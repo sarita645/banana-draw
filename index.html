@@ -66,7 +66,7 @@ input:focus{border-color:var(--orange);}
 .timer-wrap{position:relative;width:52px;height:52px;flex-shrink:0;}
 .timer-wrap svg{transform:rotate(-90deg);}
 .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;font-family:var(--mono);}
-.canvas-wrap{background:var(--warm-white);position:relative;}
+.canvas-wrap{background:white;position:relative;}
 canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 .tools{padding:9px 13px;background:var(--cream-dark);border-top:1px solid var(--gray-light);border-bottom:1px solid var(--gray-light);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .csw{width:26px;height:26px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;transition:transform .12s,border-color .12s;flex-shrink:0;}
@@ -77,6 +77,8 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 .erb,.unb{padding:5px 9px;border-radius:8px;border:1.5px solid var(--gray-light);background:var(--warm-white);cursor:pointer;font-size:11px;font-weight:700;color:var(--gray-dark);transition:all .12s;font-family:var(--font);}
 .erb.sel,.unb:hover{background:var(--charcoal);color:white;border-color:var(--charcoal);}
 .tsep{width:1px;height:20px;background:var(--gray-light);flex-shrink:0;}
+
+/* WAIT */
 .wait-center{display:flex;flex-direction:column;align-items:center;padding:28px 20px;gap:14px;text-align:center;}
 .banana-anim{width:76px;height:76px;border-radius:50%;background:var(--orange-pale);border:2px solid var(--orange-light);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;animation:bob 2.5s ease-in-out infinite;}
 .ring{position:absolute;inset:-12px;border-radius:50%;border:1.5px solid var(--orange-light);animation:rip 2s ease-out infinite;}
@@ -93,22 +95,37 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 .chk{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .chk-ok{background:var(--charcoal);}
 .chk-no{background:var(--orange-pale);border:1.5px solid var(--orange-light);}
-.ai-card{background:var(--charcoal);border-radius:13px;padding:16px;text-align:center;}
-.ai-card .lbl{font-size:11px;color:var(--gray-mid);margin-bottom:6px;}
-.ai-card .guess{font-size:24px;font-weight:700;color:var(--orange);}
-.ai-tag{display:inline-block;margin-top:7px;border-radius:99px;padding:4px 13px;font-size:12px;font-weight:700;}
-.ai-tag.ok{background:var(--orange-pale);color:var(--orange-deep);}
-.ai-tag.no{background:#FEE2E2;color:#991B1B;}
-.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
-.rc{background:var(--warm-white);border:1.5px solid var(--gray-light);border-radius:12px;overflow:hidden;}
-.rc.ai{border-color:var(--orange);border-width:2px;}
-.rc-head{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--cream-dark);font-size:11px;font-weight:700;color:var(--gray-dark);}
-.rc.ai .rc-head{background:var(--orange-pale);color:var(--orange-deep);}
-.rc img{width:100%;display:block;aspect-ratio:1;object-fit:contain;background:var(--cream);}
-.rc-placeholder{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--cream);padding:12px;}
-.reveal-card{background:var(--orange);border-radius:13px;padding:15px;text-align:center;}
+
+/* RESULT */
+.result-cards{display:flex;flex-direction:column;gap:16px;}
+.player-result-card{background:var(--warm-white);border:1.5px solid var(--gray-light);border-radius:14px;overflow:hidden;}
+.player-result-card.mine{border-color:var(--orange);}
+.prc-header{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--cream-dark);}
+.prc-header .av{width:28px;height:28px;font-size:11px;}
+.prc-name{font-size:13px;font-weight:700;color:var(--charcoal);flex:1;}
+.prc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--orange-pale);color:var(--orange-deep);}
+.prc-body{display:grid;grid-template-columns:120px 1fr;gap:0;}
+.prc-drawing{border-right:1px solid var(--cream-dark);}
+.prc-drawing img{width:120px;height:120px;object-fit:contain;display:block;background:white;}
+.prc-ai{padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+
+
+
+
+
+
+
+
+.reveal-card{background:var(--orange);border-radius:13px;padding:15px;text-align:center;margin-top:4px;}
 .reveal-card .lbl{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:4px;}
 .reveal-card .val{font-size:24px;font-weight:700;color:white;}
+
+
+
+
+
+
+
 .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--charcoal);color:white;padding:9px 18px;border-radius:99px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:9998;white-space:nowrap;max-width:90vw;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .overlay{position:fixed;inset:0;background:rgba(242,237,228,.93);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:500;text-align:center;padding:24px;}
@@ -118,7 +135,6 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 @keyframes fl{0%,100%{opacity:1;}50%{opacity:.5;}}
 .cf{position:fixed;top:-10px;pointer-events:none;z-index:9997;border-radius:2px;animation:fall linear forwards;}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}
-.div{height:1px;background:var(--cream-dark);}
 @media(min-width:540px){.app{border-left:1px solid var(--gray-light);border-right:1px solid var(--gray-light);}}
 </style>
 </head>
@@ -126,11 +142,9 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 
 <div class="toast" id="toast"></div>
 <div class="overlay" id="overlay">
-  <div class="banana-anim" style="width:80px;height:80px;font-size:34px;">
-    <div class="ring"></div><div class="ring ring2"></div>🍌
-  </div>
-  <div class="ov-title" id="ovTitle">Banana 正在觀察大家的畫...</div>
-  <div class="ov-sub">AI 分析中，請稍候</div>
+  <div class="banana-anim" style="width:80px;height:80px;font-size:34px;"><div class="ring"></div><div class="ring ring2"></div>🍌</div>
+  <div class="ov-title" id="ovTitle">Gemini 正在分析畫作...</div>
+  <div class="ov-sub" id="ovSub">請稍候</div>
   <div class="dots" style="margin-top:4px;"><span></span><span></span><span></span></div>
 </div>
 
@@ -142,7 +156,7 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div style="text-align:center;">
       <div style="font-size:68px;margin-bottom:6px;">🍌</div>
       <h1 style="font-size:30px;font-weight:700;letter-spacing:-1px;">Banana Draw</h1>
-      <p style="font-size:13px;color:var(--gray-dark);margin-top:5px;">大家一起畫圖，讓 AI 來猜</p>
+      <p style="font-size:13px;color:var(--gray-dark);margin-top:5px;">大家一起畫，攤開比較誰畫得最像！</p>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:11px;">
       <div class="card">
@@ -164,7 +178,7 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     </div>
     <div class="info-banner" style="width:100%;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>真正多人連線！朋友用不同裝置輸入代碼即可加入。</span>
+      <span>大家看同一個題目各自畫圖，時間到後一起攤開看看大家畫了什麼！</span>
     </div>
   </div>
 </div>
@@ -181,9 +195,9 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div class="ph-line"></div>
     <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">繪圖</div></div>
     <div class="ph-line"></div>
-    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">AI重繪</div></div>
+    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">等待</div></div>
     <div class="ph-line"></div>
-    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">揭曉</div></div>
+    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">比較</div></div>
   </div>
   <div class="content">
     <div class="card" id="hostSettings" style="display:none;">
@@ -215,7 +229,7 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div class="card">
       <div class="card-label">房間代碼</div>
       <div class="big-code" id="lobbyCode">------</div>
-      <p style="text-align:center;font-size:11px;color:var(--gray-mid);margin-bottom:10px;">將代碼分享給朋友</p>
+      <p style="text-align:center;font-size:11px;color:var(--gray-mid);margin-bottom:10px;">分享給朋友</p>
       <button class="btn btn-outline" style="width:100%;" onclick="copyCode()">複製代碼</button>
     </div>
     <div style="height:16px;"></div>
@@ -267,7 +281,7 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 <div class="screen" id="s-wait">
   <div class="topbar">
     <div class="logo">🍌</div>
-    <div class="logo-text"><h1>Banana Draw</h1><p>等待 AI 分析</p></div>
+    <div class="logo-text"><h1>Banana Draw</h1><p>AI 分析中</p></div>
     <div class="room-badge" id="topbarCode2">------</div>
   </div>
   <div class="phases">
@@ -275,9 +289,9 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     <div class="ph-line done"></div>
     <div class="ph done"><div class="ph-dot"></div><div class="ph-lbl">繪圖</div></div>
     <div class="ph-line done"></div>
-    <div class="ph active"><div class="ph-dot"></div><div class="ph-lbl">AI重繪</div></div>
+    <div class="ph active"><div class="ph-dot"></div><div class="ph-lbl">等待</div></div>
     <div class="ph-line"></div>
-    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">揭曉</div></div>
+    <div class="ph"><div class="ph-dot"></div><div class="ph-lbl">比較</div></div>
   </div>
   <div class="content">
     <div class="card">
@@ -286,9 +300,16 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
     </div>
     <div class="wait-center">
       <div class="banana-anim"><div class="ring"></div><div class="ring ring2"></div>🍌</div>
-      <div style="font-size:16px;font-weight:700;">Banana 正在觀察畫作</div>
-      <div style="font-size:13px;color:var(--gray-dark);line-height:1.6;">AI 仔細端詳大家的傑作中...</div>
+      <div style="font-size:16px;font-weight:700;">等待大家提交畫作</div>
+      <div style="font-size:13px;color:var(--gray-dark);line-height:1.6;" id="waitSubText">提交後 Gemini 會分析你的畫作</div>
       <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div id="hostWaitPanel" style="display:none;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:12px;color:var(--gray-mid);margin-bottom:10px;">房主操作</div>
+        <button class="btn btn-orange" style="width:100%;" onclick="forceReveal()">所有人都提交了，查看結果 →</button>
+        <div style="font-size:11px;color:var(--gray-mid);margin-top:8px;">或等 15 秒自動觸發</div>
+      </div>
     </div>
   </div>
   <div class="bottom-bar">
@@ -300,35 +321,24 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 <div class="screen" id="s-result">
   <div class="topbar">
     <div class="logo">🍌</div>
-    <div class="logo-text"><h1>Banana Draw</h1><p>結果揭曉！</p></div>
+    <div class="logo-text"><h1>Banana Draw</h1><p>攤開來看看！</p></div>
   </div>
   <div class="phases">
     <div class="ph done"><div class="ph-dot"></div><div class="ph-lbl">大廳</div></div>
     <div class="ph-line done"></div>
     <div class="ph done"><div class="ph-dot"></div><div class="ph-lbl">繪圖</div></div>
     <div class="ph-line done"></div>
-    <div class="ph done"><div class="ph-dot"></div><div class="ph-lbl">AI重繪</div></div>
+    <div class="ph done"><div class="ph-dot"></div><div class="ph-lbl">等待</div></div>
     <div class="ph-line done"></div>
-    <div class="ph active"><div class="ph-dot"></div><div class="ph-lbl">揭曉</div></div>
+    <div class="ph active"><div class="ph-dot"></div><div class="ph-lbl">比較</div></div>
   </div>
   <div class="content">
-    <div class="ai-card">
-      <div class="lbl">🍌 Banana 的猜測</div>
-      <div class="guess" id="aiGuess">---</div>
-      <div class="ai-tag ok" id="aiTag">分析中</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Banana 的評語</div>
-      <div id="aiComment" style="font-size:13px;color:var(--gray-dark);line-height:1.7;"></div>
-    </div>
     <div class="reveal-card">
-      <div class="lbl">正確題目</div>
+      <div class="lbl">本回合題目</div>
       <div class="val" id="revealTopic">---</div>
     </div>
-    <div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:11px;margin-top:4px;">看看大家都畫了什麼</div>
-      <div class="rgrid" id="rGrid"></div>
-    </div>
+    <div style="font-size:15px;font-weight:700;color:var(--charcoal);">看看大家都畫了什麼</div>
+    <div class="result-cards" id="resultCards"></div>
     <div style="height:18px;"></div>
   </div>
   <div class="bottom-bar">
@@ -341,287 +351,263 @@ canvas#dc{display:block;width:100%;touch-action:none;cursor:crosshair;}
 
 <script>
 // ── CONFIG ──
-const URL  = 'https://eqgeoylhstwoyhyyaqjn.supabase.co/rest/v1';
-const KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ2VveWxoc3R3b3loeXlhcWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODM1NDQsImV4cCI6MjA5MTk1OTU0NH0.85fIakSmeBXFYOzDvAmaPOXq4Xy7uYD5efVa7Z5V4pM';
-const HEADS = { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+const SUPA_URL = 'https://eqgeoylhstwoyhyyaqjn.supabase.co/rest/v1';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ2VveWxoc3R3b3loeXlhcWpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODM1NDQsImV4cCI6MjA5MTk1OTU0NH0.85fIakSmeBXFYOzDvAmaPOXq4Xy7uYD5efVa7Z5V4pM';
+
+
+const HEADS = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 const CIRC = 125.7;
 
-// ── API HELPERS ──
-async function dbGet(table, query='') {
-  const r = await fetch(`${URL}/${table}?${query}`, { headers: HEADS });
-  if (!r.ok) { const e = await r.text(); throw new Error(e); }
-  return r.json();
-}
-async function dbPost(table, body) {
-  const r = await fetch(`${URL}/${table}`, { method:'POST', headers: HEADS, body: JSON.stringify(body) });
-  if (!r.ok) { const e = await r.text(); throw new Error(e); }
-  return r.json();
-}
-async function dbPatch(table, query, body) {
-  const h = {...HEADS, 'Prefer':'return=representation'};
-  const r = await fetch(`${URL}/${table}?${query}`, { method:'PATCH', headers: h, body: JSON.stringify(body) });
-  if (!r.ok) { const e = await r.text(); throw new Error(e); }
-  return r.json();
-}
-async function dbDelete(table, query) {
-  const r = await fetch(`${URL}/${table}?${query}`, { method:'DELETE', headers: HEADS });
-  if (!r.ok) { const e = await r.text(); throw new Error(e); }
-}
-async function dbUpsert(table, body, onConflict) {
-  const h = {...HEADS, 'Prefer': `resolution=merge-duplicates,return=representation`};
-  const r = await fetch(`${URL}/${table}?on_conflict=${onConflict}`, { method:'POST', headers: h, body: JSON.stringify(body) });
-  if (!r.ok) { const e = await r.text(); throw new Error(e); }
-  return r.json();
-}
-
 // ── STATE ──
-const G = { code:'', name:'', isHost:false, topic:'', timerSec:90, players:[], submitted:false };
+const G = {code:'',name:'',isHost:false,topic:'',timerSec:90,players:[],submitted:false,waitStart:0,aiTriggered:false};
 let pollTimer = null;
 
+// ── API HELPERS ──
+async function dbGet(t,q=''){const r=await fetch(`${SUPA_URL}/${t}?${q}`,{headers:HEADS});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function dbPost(t,b){const r=await fetch(`${SUPA_URL}/${t}`,{method:'POST',headers:HEADS,body:JSON.stringify(b)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function dbPatch(t,q,b){const h={...HEADS,'Prefer':'return=representation'};const r=await fetch(`${SUPA_URL}/${t}?${q}`,{method:'PATCH',headers:h,body:JSON.stringify(b)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function dbDelete(t,q){const r=await fetch(`${SUPA_URL}/${t}?${q}`,{method:'DELETE',headers:HEADS});if(!r.ok)throw new Error(await r.text());}
+async function dbUpsert(t,b,c){const h={...HEADS,'Prefer':'resolution=merge-duplicates,return=representation'};const r=await fetch(`${SUPA_URL}/${t}?on_conflict=${c}`,{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok)throw new Error(await r.text());return r.json();}
+
 // ── UTILS ──
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('s-' + id).classList.add('active');
-}
-function showToast(msg, dur=2800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
-}
-function randCode() {
-  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({length:6}, () => c[Math.floor(Math.random()*c.length)]).join('');
-}
-function avClass(i) { return 'av c' + (i % 6); }
-function stopPoll() { clearInterval(pollTimer); pollTimer = null; }
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+id).classList.add('active');}
+function showToast(msg,dur=2800){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+function randCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');}
+function avClass(i){return 'av c'+(i%6);}
+function stopPoll(){clearInterval(pollTimer);pollTimer=null;}
 
 // ── CREATE ROOM ──
-async function createRoom() {
-  const name = document.getElementById('nameCreate').value.trim();
-  if (!name) { showToast('請輸入你的名字'); return; }
-  const code = randCode();
-  try {
-    await dbPost('rooms', { code, host: name, phase: 'lobby' });
-    await dbPost('players', { room_code: code, name, submitted: false });
-    G.code = code; G.name = name; G.isHost = true;
+async function createRoom(){
+  const name=document.getElementById('nameCreate').value.trim();
+  if(!name){showToast('請輸入你的名字');return;}
+  const code=randCode();
+  try{
+    await dbPost('rooms',{code,host:name,phase:'lobby',topic:'',timer_sec:90,ai_results:'{}',topic_revealed:false});
+    await dbPost('players',{room_code:code,name,submitted:false,ai_desc:'',ai_score:0});
+    G.code=code;G.name=name;G.isHost=true;
     enterLobby();
-  } catch(e) {
-    showToast('建立失敗：' + e.message);
-  }
+  }catch(e){showToast('建立失敗：'+e.message);}
 }
 
 // ── JOIN ROOM ──
-async function joinRoom() {
-  const code = document.getElementById('joinCode').value.trim().toUpperCase();
-  const name = document.getElementById('nameJoin').value.trim();
-  if (!code || code.length !== 6) { showToast('請輸入 6 位代碼'); return; }
-  if (!name) { showToast('請輸入你的名字'); return; }
-  try {
-    const rooms = await dbGet('rooms', `code=eq.${code}&select=*`);
-    if (!rooms.length) { showToast('找不到房間，請確認代碼'); return; }
-    if (rooms[0].phase !== 'lobby') { showToast('遊戲已開始，無法加入'); return; }
-    await dbUpsert('players', { room_code: code, name, submitted: false }, 'room_code,name');
-    G.code = code; G.name = name; G.isHost = false;
+async function joinRoom(){
+  const code=document.getElementById('joinCode').value.trim().toUpperCase();
+  const name=document.getElementById('nameJoin').value.trim();
+  if(!code||code.length!==6){showToast('請輸入 6 位代碼');return;}
+  if(!name){showToast('請輸入你的名字');return;}
+  try{
+    const rooms=await dbGet('rooms',`code=eq.${code}&select=*`);
+    if(!rooms.length){showToast('找不到房間');return;}
+    if(rooms[0].phase!=='lobby'){showToast('遊戲已開始');return;}
+    await dbUpsert('players',{room_code:code,name,submitted:false,ai_desc:'',ai_score:0},'room_code,name');
+    G.code=code;G.name=name;G.isHost=false;
     enterLobby();
-  } catch(e) {
-    showToast('加入失敗：' + e.message);
-  }
+  }catch(e){showToast('加入失敗：'+e.message);}
 }
 
 // ── LOBBY ──
-function enterLobby() {
-  document.getElementById('topbarCode').textContent = G.code;
-  document.getElementById('lobbyCode').textContent = G.code;
-  document.getElementById('hostSettings').style.display = G.isHost ? '' : 'none';
-  document.getElementById('topbarSub').textContent = G.isHost ? '房主' : '等待開始';
+function enterLobby(){
+  document.getElementById('topbarCode').textContent=G.code;
+  document.getElementById('lobbyCode').textContent=G.code;
+  document.getElementById('hostSettings').style.display=G.isHost?'':'none';
+  document.getElementById('topbarSub').textContent=G.isHost?'房主':'等待開始';
   show('lobby');
   startPoll('lobby');
 }
 
-async function refreshLobby() {
-  try {
-    const players = await dbGet('players', `room_code=eq.${G.code}&order=created_at`);
-    G.players = players;
-    document.getElementById('pCount').textContent = players.length;
-    document.getElementById('pStatus').textContent = players.length < 2 ? '需要至少 2 名玩家' : '可以開始！';
-    document.getElementById('pList').innerHTML = players.map((p,i) =>
+async function refreshLobby(){
+  try{
+    const players=await dbGet('players',`room_code=eq.${G.code}&order=created_at`);
+    G.players=players;
+    document.getElementById('pCount').textContent=players.length;
+    document.getElementById('pStatus').textContent=players.length<2?'需要至少 2 名玩家':'可以開始！';
+    document.getElementById('pList').innerHTML=players.map((p,i)=>
       `<div class="p-chip${p.name===G.name?' me':''}">
         <div class="${avClass(i)}">${p.name.charAt(0)}</div>
         ${p.name}${p.name===G.name?' <span style="font-size:10px;color:var(--orange-deep);">(我)</span>':''}
       </div>`).join('');
-    const btn = document.getElementById('startBtn');
-    if (G.isHost) { btn.disabled = players.length < 2; btn.textContent = '開始遊戲 →'; }
-    else { btn.disabled = true; btn.textContent = '等待房主開始...'; }
-
-    // Non-host: check if game started
-    if (!G.isHost) {
-      const rooms = await dbGet('rooms', `code=eq.${G.code}&select=phase,topic,timer_sec`);
-      if (rooms.length && rooms[0].phase === 'draw') {
-        G.topic = rooms[0].topic;
-        G.timerSec = rooms[0].timer_sec;
-        stopPoll(); beginDraw();
+    const btn=document.getElementById('startBtn');
+    if(G.isHost){btn.disabled=players.length<2;btn.textContent='開始遊戲 →';}
+    else{btn.disabled=true;btn.textContent='等待房主開始...';}
+    if(!G.isHost){
+      const rooms=await dbGet('rooms',`code=eq.${G.code}&select=phase,topic,timer_sec`);
+      if(rooms.length&&rooms[0].phase==='draw'){
+        G.topic=rooms[0].topic;G.timerSec=rooms[0].timer_sec;
+        stopPoll();beginDraw();
       }
+      if(rooms.length&&rooms[0].phase==='result'){stopPoll();loadResult();}
     }
-  } catch(e) { console.error(e); }
+  }catch(e){console.error(e);}
 }
 
-function setT(t) {
-  document.getElementById('topicInput').value = t;
-  document.querySelectorAll('.qtag').forEach(el => el.classList.toggle('sel', el.textContent === t));
-}
-function copyCode() {
-  navigator.clipboard.writeText(G.code).catch(()=>{});
-  showToast('代碼已複製：' + G.code);
-}
-async function leaveRoom() {
+function setT(t){document.getElementById('topicInput').value=t;document.querySelectorAll('.qtag').forEach(el=>el.classList.toggle('sel',el.textContent===t));}
+function copyCode(){navigator.clipboard.writeText(G.code).catch(()=>{});showToast('代碼已複製：'+G.code);}
+async function leaveRoom(){
   stopPoll();
-  try { await dbDelete('players', `room_code=eq.${G.code}&name=eq.${G.name}`); } catch(e){}
-  G.code=''; G.name=''; G.isHost=false;
+  try{await dbDelete('players',`room_code=eq.${G.code}&name=eq.${G.name}`);}catch(e){}
+  G.code='';G.name='';G.isHost=false;
   show('home');
 }
 
 // ── START GAME ──
-async function startGame() {
-  if (!G.isHost) return;
-  const topic = document.getElementById('topicInput').value.trim();
-  if (!topic) { showToast('請先設定題目'); return; }
-  const timerSec = parseInt(document.getElementById('timerSet').value) || 90;
-  G.topic = topic; G.timerSec = timerSec;
-  try {
-    await dbPatch('rooms', `code=eq.${G.code}`, { topic, timer_sec: timerSec, phase: 'draw' });
-    stopPoll(); beginDraw();
-  } catch(e) { showToast('開始失敗：' + e.message); }
+async function startGame(){
+  if(!G.isHost)return;
+  const topic=document.getElementById('topicInput').value.trim();
+  if(!topic){showToast('請先設定題目');return;}
+  const timerSec=parseInt(document.getElementById('timerSet').value)||90;
+  G.topic=topic;G.timerSec=timerSec;
+  try{
+    await dbPatch('rooms',`code=eq.${G.code}`,{topic,timer_sec:timerSec,phase:'draw',ai_results:'{}',topic_revealed:false});
+    await dbPatch('players',`room_code=eq.${G.code}`,{submitted:false,ai_desc:'',ai_score:0});
+    stopPoll();beginDraw();
+  }catch(e){showToast('開始失敗：'+e.message);}
 }
 
-// ── POLLING ──
-function startPoll(mode) {
+// ── POLL ──
+function startPoll(mode){
   stopPoll();
-  const interval = mode === 'wait' ? 2000 : 2500;
-  if (mode === 'lobby') pollTimer = setInterval(refreshLobby, interval);
-  else if (mode === 'wait') pollTimer = setInterval(refreshWait, interval);
-  // Immediate first call
-  if (mode === 'lobby') refreshLobby();
-  else if (mode === 'wait') refreshWait();
+  if(mode==='lobby')pollTimer=setInterval(refreshLobby,2500);
+  else if(mode==='wait')pollTimer=setInterval(refreshWait,2000);
+  else if(mode==='result')pollTimer=setInterval(refreshResult,2500);
+  if(mode==='lobby')refreshLobby();
+  else if(mode==='wait')refreshWait();
+}
+
+async function refreshResult(){
+  if(G.isHost)return;
+  try{
+    const rooms=await dbGet('rooms',`code=eq.${G.code}&select=phase,topic,timer_sec`);
+    if(!rooms.length)return;
+    const room=rooms[0];
+    if(room.phase==='lobby'){
+      G.topic='';
+      stopPoll();
+      enterLobby();
+    } else if(room.phase==='draw'){
+      G.topic=room.topic;
+      G.timerSec=room.timer_sec;
+      stopPoll();
+      beginDraw();
+    }
+  }catch(e){console.error(e);}
 }
 
 // ── DRAWING ──
-let curC='#2A2A2A', curS=3, erasing=false, drawing=false, lx=0, ly=0;
-let strokes=[], curStroke=[];
-let timerInt=null, timeLeft=0;
+let curC='#2A2A2A',curS=3,erasing=false,drawing=false,lx=0,ly=0;
+let strokes=[],curStroke=[];
+let timerInt=null,timeLeft=0;
 
-function beginDraw() {
-  const canvas = document.getElementById('dc');
-  const wrap = document.querySelector('.canvas-wrap');
-  const w = wrap.clientWidth || window.innerWidth;
-  const h = Math.min(Math.max(w * 0.72, 220), 380);
-  // Set canvas logical size = CSS size (no DPR scaling) so coords always match
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, w, h);
-  strokes=[]; curStroke=[];
-  G.submitted = false;
-  document.getElementById('subBtn').disabled = false;
-  document.getElementById('subBtn').textContent = '提交畫作 →';
-  document.getElementById('topicShow').textContent = G.topic;
-  timeLeft = G.timerSec;
-  updateTimer(); setupEvents(); startTimer();
+function beginDraw(){
+  const canvas=document.getElementById('dc');
+  const wrap=document.querySelector('.canvas-wrap');
+  const w=wrap.clientWidth||window.innerWidth;
+  const h=Math.min(Math.max(w*.72,220),380);
+  canvas.width=w;canvas.height=h;
+  canvas.style.width=w+'px';canvas.style.height=h+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,w,h);
+  strokes=[];curStroke=[];
+  G.submitted=false;
+  document.getElementById('subBtn').disabled=false;
+  document.getElementById('subBtn').textContent='提交畫作 →';
+  document.getElementById('topicShow').textContent=G.topic;
+  timeLeft=G.timerSec;
+  updateTimer();setupEvents();startTimer();
   show('draw');
 }
 
-function setupEvents() {
-  const c = document.getElementById('dc');
-  c.onmousedown = e => { drawing=true; [lx,ly]=pos(e); startS(); };
-  c.onmousemove = e => { if(drawing) drawS(e); };
-  c.onmouseup = () => { drawing=false; endS(); };
-  c.onmouseleave = () => { drawing=false; endS(); };
-  c.ontouchstart = e => { e.preventDefault(); drawing=true; [lx,ly]=pos(e); startS(); };
-  c.ontouchmove = e => { e.preventDefault(); if(drawing) drawS(e); };
-  c.ontouchend = () => { drawing=false; endS(); };
+function setupEvents(){
+  const c=document.getElementById('dc');
+  c.onmousedown=e=>{drawing=true;[lx,ly]=pos(e);startS();};
+  c.onmousemove=e=>{if(drawing)drawS(e);};
+  c.onmouseup=()=>{drawing=false;endS();};
+  c.onmouseleave=()=>{drawing=false;endS();};
+  c.ontouchstart=e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);startS();};
+  c.ontouchmove=e=>{e.preventDefault();if(drawing)drawS(e);};
+  c.ontouchend=()=>{drawing=false;endS();};
 }
-function pos(e) {
-  const canvas = document.getElementById('dc');
-  const r = canvas.getBoundingClientRect();
-  const s = e.touches ? e.touches[0] : e;
-  // Scale in case CSS size differs from canvas logical size
-  const scaleX = canvas.width / r.width;
-  const scaleY = canvas.height / r.height;
-  return [(s.clientX - r.left) * scaleX, (s.clientY - r.top) * scaleY];
+function pos(e){
+  const r=document.getElementById('dc').getBoundingClientRect();
+  const s=e.touches?e.touches[0]:e;
+  const sx=document.getElementById('dc').width/r.width;
+  const sy=document.getElementById('dc').height/r.height;
+  return[(s.clientX-r.left)*sx,(s.clientY-r.top)*sy];
 }
-function startS() { curStroke=[{x:lx,y:ly}]; }
-function endS() { if(curStroke.length>1) strokes.push({c:erasing?null:curC,s:curS,e:erasing,pts:[...curStroke]}); curStroke=[]; }
-function drawS(e) {
-  const [x,y]=pos(e), ctx=document.getElementById('dc').getContext('2d');
-  ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y);
-  ctx.strokeStyle=erasing?'#FFFFFF':curC; ctx.lineWidth=erasing?24:curS; ctx.stroke();
-  curStroke.push({x,y}); [lx,ly]=[x,y];
+function startS(){curStroke=[{x:lx,y:ly}];}
+function endS(){if(curStroke.length>1)strokes.push({c:erasing?null:curC,s:curS,e:erasing,pts:[...curStroke]});curStroke=[];}
+function drawS(e){
+  const[x,y]=pos(e),ctx=document.getElementById('dc').getContext('2d');
+  ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(x,y);
+  ctx.strokeStyle=erasing?'#FFFFFF':curC;ctx.lineWidth=erasing?24:curS;ctx.stroke();
+  curStroke.push({x,y});[lx,ly]=[x,y];
 }
-function redraw() {
-  const cv=document.getElementById('dc'), ctx=cv.getContext('2d');
+function redraw(){
+  const cv=document.getElementById('dc'),ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, cv.width, cv.height);
-  strokes.forEach(s => {
-    if(s.pts.length<2) return;
-    ctx.beginPath(); ctx.moveTo(s.pts[0].x,s.pts[0].y);
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,cv.width,cv.height);
+  strokes.forEach(s=>{
+    if(s.pts.length<2)return;
+    ctx.beginPath();ctx.moveTo(s.pts[0].x,s.pts[0].y);
     s.pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));
-    ctx.strokeStyle=s.e?'#FFFFFF':s.c; ctx.lineWidth=s.s; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
+    ctx.strokeStyle=s.e?'#FFFFFF':s.c;ctx.lineWidth=s.s;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
   });
 }
-function undo() { if(strokes.length){strokes.pop();redraw();} }
-function clearDraw() { strokes=[]; redraw(); }
-function selC(el,c) { document.querySelectorAll('.csw').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); curC=c; erasing=false; document.getElementById('erb').classList.remove('sel'); }
-function selS(i,s) { [0,1,2].forEach(j=>document.getElementById('szb'+j).classList.remove('sel')); document.getElementById('szb'+i).classList.add('sel'); curS=s; }
-function togE() { erasing=!erasing; document.getElementById('erb').classList.toggle('sel',erasing); }
+function undo(){if(strokes.length){strokes.pop();redraw();}}
+function clearDraw(){strokes=[];redraw();}
+function selC(el,c){document.querySelectorAll('.csw').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');curC=c;erasing=false;document.getElementById('erb').classList.remove('sel');}
+function selS(i,s){[0,1,2].forEach(j=>document.getElementById('szb'+j).classList.remove('sel'));document.getElementById('szb'+i).classList.add('sel');curS=s;}
+function togE(){erasing=!erasing;document.getElementById('erb').classList.toggle('sel',erasing);}
 
-function startTimer() {
+function startTimer(){
   clearInterval(timerInt);
-  timerInt = setInterval(() => { timeLeft--; updateTimer(); if(timeLeft<=0){clearInterval(timerInt);if(!G.submitted)submitDraw();} }, 1000);
+  timerInt=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInt);if(!G.submitted)submitDraw();}},1000);
 }
-function updateTimer() {
-  document.getElementById('timerNum').textContent = Math.max(0,timeLeft);
-  const pct = timeLeft/G.timerSec;
-  document.getElementById('timerArc').style.strokeDashoffset = CIRC*(1-pct);
-  document.getElementById('timerArc').style.stroke = timeLeft<=10?'#E24B4A':timeLeft<=30?'#F4944A':'#E8640A';
+function updateTimer(){
+  document.getElementById('timerNum').textContent=Math.max(0,timeLeft);
+  const pct=timeLeft/G.timerSec;
+  document.getElementById('timerArc').style.strokeDashoffset=CIRC*(1-pct);
+  document.getElementById('timerArc').style.stroke=timeLeft<=10?'#E24B4A':timeLeft<=30?'#F4944A':'#E8640A';
 }
 
 // ── SUBMIT ──
-async function submitDraw() {
-  if(G.submitted) return;
-  G.submitted = true;
-  clearInterval(timerInt);
-  const dataUrl = document.getElementById('dc').toDataURL('image/jpeg', 0.6);
+async function submitDraw(){
+  if(G.submitted)return;
+  G.submitted=true;clearInterval(timerInt);
+  const dataUrl=document.getElementById('dc').toDataURL('image/jpeg',.65);
   document.getElementById('subBtn').textContent='已提交 ✓';
   document.getElementById('subBtn').disabled=true;
-  try {
-    await dbUpsert('drawings', { room_code:G.code, player_name:G.name, image_data:dataUrl }, 'room_code,player_name');
-    await dbPatch('players', `room_code=eq.${G.code}&name=eq.${G.name}`, { submitted:true });
-  } catch(e) { showToast('提交失敗：'+e.message); }
+
+  // 1. Save drawing
+  try{
+    await dbUpsert('drawings',{room_code:G.code,player_name:G.name,image_data:dataUrl},'room_code,player_name');
+    await dbPatch('players',`room_code=eq.${G.code}&name=eq.${G.name}`,{submitted:true});
+  }catch(e){showToast('提交失敗：'+e.message);}
+
+  showToast('畫作已提交！');
   showWait();
 }
 
+
+
 // ── WAIT ──
-function showWait() {
-  document.getElementById('topbarCode2').textContent = G.code;
-  document.getElementById('seeBtn').disabled = true;
-  G.waitStart = Date.now();
+function showWait(){
+  document.getElementById('topbarCode2').textContent=G.code;
+  document.getElementById('seeBtn').disabled=true;
+  G.waitStart=Date.now();G.aiTriggered=false;
+  if(G.isHost)document.getElementById('hostWaitPanel').style.display='';
   show('wait');
   startPoll('wait');
 }
 
-async function refreshWait() {
-  try {
-    const [players, rooms] = await Promise.all([
-      dbGet('players', `room_code=eq.${G.code}&order=created_at`),
-      dbGet('rooms', `code=eq.${G.code}&select=phase,ai_guess,ai_confidence,ai_comment,topic,timer_sec`)
+async function refreshWait(){
+  try{
+    const[players,rooms]=await Promise.all([
+      dbGet('players',`room_code=eq.${G.code}&order=created_at`),
+      dbGet('rooms',`code=eq.${G.code}&select=phase,topic`)
     ]);
-
     // Render submission status
-    document.getElementById('subList').innerHTML = players.map((p,i) =>
+    document.getElementById('subList').innerHTML=players.map((p,i)=>
       `<div class="sub-chip">
         <div class="${avClass(i)}" style="width:20px;height:20px;font-size:9px;">${p.name.charAt(0)}</div>
         ${p.name}
@@ -630,127 +616,127 @@ async function refreshWait() {
         </div>
       </div>`).join('');
 
-    if (!rooms.length) return;
-    const room = rooms[0];
+    if(!rooms.length)return;
+    const room=rooms[0];
 
-    // Result ready — show to everyone
-    if (room.phase === 'result') {
-      stopPoll();
-      document.getElementById('seeBtn').disabled = false;
-      loadResult(room);
-      return;
-    }
+    // Result ready
+    if(room.phase==='result'){stopPoll();document.getElementById('seeBtn').disabled=false;loadResult();return;}
 
-    // Host: trigger AI when all submitted OR after timeout (30s)
-    if (G.isHost && room.phase === 'draw') {
-      const allDone = players.length > 0 && players.every(p => p.submitted);
-      const timedOut = (Date.now() - G.waitStart) > 30000;
-      if (allDone || timedOut) {
+    // Host: trigger reveal when all submitted or timeout
+    if(G.isHost&&room.phase==='draw'&&!G.aiTriggered){
+      const allDone=players.length>0&&players.every(p=>p.submitted);
+      const timedOut=(Date.now()-G.waitStart)>15000;
+      if(allDone||timedOut){
+        G.aiTriggered=true;
         stopPoll();
-        triggerAI();
+        revealResults();
       }
     }
-  } catch(e) { console.error(e); }
+  }catch(e){console.error(e);}
 }
 
-// ── AI ──
-async function triggerAI() {
-  // Lock phase to 'analyzing' to prevent double trigger
-  try {
-    const updated = await dbPatch('rooms', `code=eq.${G.code}&phase=eq.draw`, { phase:'analyzing' });
-    if (!updated || updated.length === 0) return; // Another host already triggered
-  } catch(e) { return; }
+async function forceReveal(){
+  if(G.aiTriggered)return;
+  G.aiTriggered=true;
+  document.getElementById('hostWaitPanel').style.display='none';
+  stopPoll();
+  revealResults();
+}
 
+// ── REVEAL: host calculates scores and sets phase=result ──
+async function revealResults(){
   document.getElementById('overlay').classList.add('active');
-  try {
-    const drawings = await dbGet('drawings', `room_code=eq.${G.code}&order=created_at`);
-    if (!drawings.length) { await finishAI({guess:'沒有畫作',confidence:'低',comment:'大家都沒有提交！'}); return; }
+  document.getElementById('ovTitle').textContent='計算結果中...';
+  try{
+    const[players,rooms]=await Promise.all([
+      dbGet('players',`room_code=eq.${G.code}&order=created_at`),
+      dbGet('rooms',`code=eq.${G.code}&select=topic`)
+    ]);
 
-    const imgs = drawings.map(d => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:d.image_data.split(',')[1] } }));
-    const names = drawings.map(d=>d.player_name).join('、');
-    const prompt = `你是叫 Banana 的 AI，玩「你畫我猜」遊戲。上面是 ${drawings.length} 位玩家（${names}）畫的圖，每個人都畫同一個題目，但你不知道是什麼。請仔細觀察後以 JSON 回應（只輸出 JSON）：{"guess":"題目（繁體中文詞語）","confidence":"高/中/低","comment":"用輕鬆語氣評論大家的畫，2-3句，繁體中文"}`;
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:500, messages:[{role:'user',content:[...imgs,{type:'text',text:prompt}]}] })
-    });
-    const data = await resp.json();
-    const raw = data.content?.find(c=>c.type==='text')?.text || '{}';
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    await finishAI({ guess:parsed.guess||'看不出來', confidence:parsed.confidence||'低', comment:parsed.comment||'大家的畫很有個性！' });
-  } catch(e) {
-    await finishAI({ guess:'猜不出來 😅', confidence:'低', comment:'Banana 努力看了，但還是猜不出來！' });
+  // Set room to result phase
+    await dbPatch('rooms',`code=eq.${G.code}`,{phase:'result',topic_revealed:true});
+    document.getElementById('overlay').classList.remove('active');
+    loadResult();
+  }catch(e){
+    document.getElementById('overlay').classList.remove('active');
+    showToast('發生錯誤：'+e.message);
   }
 }
 
-async function finishAI(result) {
-  await dbPatch('rooms', `code=eq.${G.code}`, { phase:'result', ai_guess:result.guess, ai_confidence:result.confidence, ai_comment:result.comment });
-  document.getElementById('overlay').classList.remove('active');
+  return 1;
 }
 
-// ── RESULT ──
-function goResult() {
-  dbGet('rooms', `code=eq.${G.code}&select=*`).then(r => { if(r.length) loadResult(r[0]); });
-}
-
-async function loadResult(room) {
+// ── LOAD RESULT ──
+async function loadResult(){
   stopPoll();
   document.getElementById('overlay').classList.remove('active');
-  document.getElementById('seeBtn').disabled = false;
-  const guess = room.ai_guess || '???';
-  const topic = room.topic || '';
-  document.getElementById('aiGuess').textContent = '"' + guess + '"';
-  document.getElementById('aiComment').textContent = room.ai_comment || '';
-  document.getElementById('revealTopic').textContent = '✏️ ' + topic;
-  const correct = guess.replace(/\s/g,'') === topic.replace(/\s/g,'');
-  const tag = document.getElementById('aiTag');
-  tag.textContent = correct ? '猜對了！🎉' : room.ai_confidence==='高' ? '有點接近...' : '猜錯了 😂';
-  tag.className = 'ai-tag ' + (correct?'ok':'no');
+  try{
+    const[players,rooms,drawings]=await Promise.all([
+      dbGet('players',`room_code=eq.${G.code}&order=ai_score.desc`),
+      dbGet('rooms',`code=eq.${G.code}&select=topic`),
+      dbGet('drawings',`room_code=eq.${G.code}&order=created_at`)
+    ]);
+    const topic=rooms[0]?.topic||'';
+    document.getElementById('revealTopic').textContent=topic;
 
-  const drawings = await dbGet('drawings', `room_code=eq.${G.code}&order=created_at`);
-  const grid = document.getElementById('rGrid');
-  grid.innerHTML = drawings.map((d,i) =>
-    `<div class="rc">
-      <div class="rc-head"><div class="${avClass(i)}" style="width:18px;height:18px;font-size:8px;">${d.player_name.charAt(0)}</div>${d.player_name}${d.player_name===G.name?' (我)':''}</div>
-      <img src="${d.image_data}" loading="lazy" alt="${d.player_name}的畫">
-    </div>`).join('');
-  // AI guess already shown prominently above
+    // Build result cards - just show drawings side by side
+    const drawMap={};
+    drawings.forEach(d=>drawMap[d.player_name]=d.image_data);
 
-  document.getElementById('nextBtn').textContent = G.isHost ? '再玩一輪 →' : '回首頁';
-  show('result');
-  if (correct) confetti();
+    document.getElementById('resultCards').innerHTML=players.map((p,i)=>{
+      const img=drawMap[p.name];
+      return`<div class="player-result-card${p.name===G.name?' mine':''}">
+        <div class="prc-header">
+          <div class="${avClass(i)}" style="width:28px;height:28px;font-size:11px;">${p.name.charAt(0)}</div>
+          <div class="prc-name">${p.name}${p.name===G.name?' <span style="color:var(--orange);font-size:10px;">(我)</span>':''}</div>
+        </div>
+        <div style="padding:12px;">
+          ${img?`<img src="${img}" alt="${p.name}的畫" style="width:100%;border-radius:8px;display:block;background:white;">`:'<div style="height:120px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gray-mid);">無畫作</div>'}
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('nextBtn').textContent=G.isHost?'再玩一輪 →':'等待房主...';
+    if(!G.isHost){
+      document.getElementById('nextBtn').disabled=true;
+      startPoll('result');
+    }
+    show('result');
+  }catch(e){showToast('載入結果失敗：'+e.message);}
+}
+
+async function goResult(){
+  await loadResult();
 }
 
 // ── NEXT ROUND ──
-async function nextRound() {
-  if (!G.isHost) { leaveRoom(); return; }
-  try {
-    await dbDelete('drawings', `room_code=eq.${G.code}`);
-    await dbPatch('players', `room_code=eq.${G.code}`, { submitted:false });
-    await dbPatch('rooms', `code=eq.${G.code}`, { phase:'lobby', topic:'', ai_guess:'', ai_comment:'', ai_confidence:'' });
+async function nextRound(){
+  if(!G.isHost)return;
+  try{
+    await dbDelete('drawings',`room_code=eq.${G.code}`);
+    await dbPatch('players',`room_code=eq.${G.code}`,{submitted:false,ai_desc:'',ai_summary:'',ai_score:0});
+    await dbPatch('rooms',`code=eq.${G.code}`,{phase:'lobby',topic:'',ai_results:'{}',topic_revealed:false});
     G.topic='';
     enterLobby();
-  } catch(e) { showToast('錯誤：'+e.message); }
+  }catch(e){showToast('錯誤：'+e.message);}
 }
 
 // ── CONFETTI ──
-function confetti() {
+function confetti(){
   const cols=['#E8640A','#F4944A','#2A2A2A','#C8C4BC','#FBE8D6','#C95508'];
-  for(let i=0;i<55;i++) setTimeout(()=>{
-    const el=document.createElement('div'); el.className='cf';
+  for(let i=0;i<55;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';
     const sz=6+Math.random()*8;
     el.style.cssText=`left:${Math.random()*100}vw;width:${sz}px;height:${sz}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.8}s;`;
-    document.body.appendChild(el); setTimeout(()=>el.remove(),4500);
-  }, i*28);
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4500);
+  },i*28);
 }
 
-// ── KEYBOARD ──
-document.addEventListener('keydown', e => {
-  if(e.key!=='Enter') return;
-  if(document.getElementById('s-home').classList.contains('active')) {
-    if(document.activeElement.id==='nameCreate') createRoom();
-    if(['nameJoin','joinCode'].includes(document.activeElement.id)) joinRoom();
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  if(document.getElementById('s-home').classList.contains('active')){
+    if(document.activeElement.id==='nameCreate')createRoom();
+    if(['nameJoin','joinCode'].includes(document.activeElement.id))joinRoom();
   }
 });
 </script>

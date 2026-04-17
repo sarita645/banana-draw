@@ -407,7 +407,7 @@ async function createRoom(){
   const code=randCode();
   try{
     await dbPost('rooms',{code,host:name,phase:'lobby',topic:'',timer_sec:90,ai_results:'{}',topic_revealed:false});
-    await dbPost('players',{room_code:code,name,submitted:false,ai_desc:'',ai_score:0});
+    await dbPost('players',{room_code:code,name,submitted:false,ai_desc:'',ai_summary:'',ai_image:'',ai_score:0});
     G.code=code;G.name=name;G.isHost=true;G.geminiKey=geminiKey;
     enterLobby();
   }catch(e){showToast('建立失敗：'+e.message);}
@@ -423,7 +423,7 @@ async function joinRoom(){
     const rooms=await dbGet('rooms',`code=eq.${code}&select=*`);
     if(!rooms.length){showToast('找不到房間');return;}
     if(rooms[0].phase!=='lobby'){showToast('遊戲已開始');return;}
-    await dbUpsert('players',{room_code:code,name,submitted:false,ai_desc:'',ai_score:0},'room_code,name');
+    await dbUpsert('players',{room_code:code,name,submitted:false,ai_desc:'',ai_summary:'',ai_image:'',ai_score:0},'room_code,name');
     G.code=code;G.name=name;G.isHost=false;
     enterLobby();
   }catch(e){showToast('加入失敗：'+e.message);}
@@ -623,32 +623,58 @@ async function submitDraw(){
 // ── GEMINI ANALYSIS ──
 async function analyzeMyDrawing(dataUrl){
   const b64=dataUrl.split(',')[1];
-  const prompt=`你是一個有趣的 AI，請用繁體中文描述這張手繪圖畫的是什麼。
-要求：
-1. 用 1-2 句話描述畫中的主要內容
-2. 語氣輕鬆有趣
-3. 不要說「這張圖」或「這幅畫」，直接描述內容
-4. 最後用一個詞總結（格式：總結：XXX）`;
+  let desc='', summary='', imageB64='';
+
+  // Step 1: Gemini reads drawing → text description
   try{
-    const resp=await fetch(`${GEMINI_URL}?key=${G.geminiKey}`,{
+    const r1=await fetch(GEMINI_URL+'?key='+G.geminiKey,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[
         {inline_data:{mime_type:'image/jpeg',data:b64}},
-        {text:prompt}
+        {text:'你是一個有趣的 AI，請用繁體中文描述這張手繪圖畫的是什麼。用 1-2 句話直接描述內容，語氣輕鬆有趣，不要說「這張圖」。最後一行只寫「總結：一個詞」'}
       ]}]})
     });
-    const data=await resp.json();
-    if(data.error){console.error('Gemini error:',data.error.message);return;}
-    const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-    const descMatch=text.match(/描述[：:]\s*(.+)/);
-    const summaryMatch=text.match(/總結[：:]\s*(.+)/);
-    const desc=descMatch?descMatch[1].trim():text.slice(0,120);
-    const summary=summaryMatch?summaryMatch[1].trim():'';
-    await dbPatch('players',`room_code=eq.${G.code}&name=eq.${G.name}`,{
-      ai_desc:desc, ai_summary:summary
+    const d1=await r1.json();
+    if(d1.error){console.error('Gemini desc error:',d1.error.message);}
+    else{
+      const text=d1.candidates?.[0]?.content?.parts?.[0]?.text||'';
+      const lines=text.trim().split('\n').filter(l=>l.trim());
+      const si=lines.findIndex(l=>/^總結/.test(l));
+      summary=si>=0?lines[si].replace(/^總結[：:]\s*/,'').trim():'';
+      desc=lines.filter((_,i)=>i!==si).join(' ').trim()||text.slice(0,150);
+    }
+  }catch(e){console.error('Step1 error:',e);}
+
+  // Step 2: Gemini generates image from description
+  if(desc){
+    try{
+      const imgPrompt='Simple cute cartoon illustration: '+desc+'. White background, flat colorful style, no text.';
+      const IMG_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key='+G.geminiKey;
+      const r2=await fetch(IMG_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{parts:[{text:imgPrompt}]}],
+          generationConfig:{responseModalities:['IMAGE'],responseMimeType:'image/png'}
+        })
+      });
+      const d2=await r2.json();
+      if(d2.error){console.error('Gemini img error:',d2.error.message);}
+      else{
+        const parts=d2.candidates?.[0]?.content?.parts||[];
+        const imgPart=parts.find(p=>p.inlineData);
+        if(imgPart) imageB64='data:'+imgPart.inlineData.mimeType+';base64,'+imgPart.inlineData.data;
+      }
+    }catch(e){console.error('Step2 error:',e);}
+  }
+
+  // Save to DB
+  try{
+    await dbPatch('players','room_code=eq.'+G.code+'&name=eq.'+G.name,{
+      ai_desc:desc, ai_summary:summary, ai_image:imageB64
     });
-  }catch(e){console.error('Gemini fetch error:',e);}
+  }catch(e){console.error('DB save error:',e);}
 }
 
 // ── WAIT ──
@@ -750,10 +776,11 @@ async function loadResult(){
         </div>
         <div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
           ${img?`<img src="${img}" alt="${p.name}的畫" style="width:100%;border-radius:8px;display:block;background:white;">`:'<div style="height:120px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gray-mid);">無畫作</div>'}
-          ${p.ai_desc?`<div style="background:var(--orange-pale);border-radius:8px;padding:8px 10px;">
-            <div style="font-size:10px;font-weight:700;color:var(--orange-deep);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">🍌 Gemini 說</div>
-            <div style="font-size:12px;color:var(--gray-dark);line-height:1.6;">${p.ai_desc}</div>
-            ${p.ai_summary?`<div style="font-size:11px;color:var(--gray-mid);margin-top:4px;">總結：<strong style="color:var(--charcoal);">${p.ai_summary}</strong></div>`:''}
+          ${p.ai_desc||p.ai_image?`<div style="background:var(--orange-pale);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:10px;font-weight:700;color:var(--orange-deep);text-transform:uppercase;letter-spacing:1px;">🍌 Gemini 的詮釋</div>
+            ${p.ai_image?`<img src="${p.ai_image}" alt="AI生成圖" style="width:100%;border-radius:8px;display:block;">`:''}
+            ${p.ai_desc?`<div style="font-size:12px;color:var(--gray-dark);line-height:1.6;">${p.ai_desc}</div>`:''}
+            ${p.ai_summary?`<div style="font-size:11px;padding:3px 8px;background:var(--orange);color:white;border-radius:99px;display:inline-block;font-weight:700;">總結：${p.ai_summary}</div>`:''}
           </div>`:''}
         </div>
       </div>`;
@@ -777,7 +804,7 @@ async function nextRound(){
   if(!G.isHost)return;
   try{
     await dbDelete('drawings',`room_code=eq.${G.code}`);
-    await dbPatch('players',`room_code=eq.${G.code}`,{submitted:false,ai_desc:'',ai_summary:'',ai_score:0});
+    await dbPatch('players',`room_code=eq.${G.code}`,{submitted:false,ai_desc:'',ai_summary:'',ai_image:'',ai_score:0});
     await dbPatch('rooms',`code=eq.${G.code}`,{phase:'lobby',topic:'',ai_results:'{}',topic_revealed:false});
     G.topic='';
     enterLobby();
